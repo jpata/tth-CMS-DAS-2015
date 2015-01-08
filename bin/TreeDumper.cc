@@ -144,25 +144,41 @@ int main(int argc, const char* argv[])
 
 			for (int i=0; i < it.nalep; i++) {
 				#define ASSIGN(x, y) ot.lep__##x[ot.n__lep] = it.aLepton_##y[i];
+				#define ASSIGN_GEN(x, y) ot.gen_lep__##x[ot.n__lep] = it.aLepton_##y[i]; \
 
 				ASSIGN(pt, pt)
 				ASSIGN(eta, eta)
 				ASSIGN(phi, phi)
 				ASSIGN(mass, mass)
+
+				ASSIGN_GEN(pt, genPt)
+				ASSIGN_GEN(eta, genEta)
+				ASSIGN_GEN(phi, genPhi)
+
+				ASSIGN(dxy, dxy)
+				ASSIGN(dz, dz)
+				ASSIGN(rel_iso, pfCombRelIso)
+				ASSIGN(id, type)
+
 				#undef ASSIGN
+				#undef ASSIGN_GEN
 
 				ot.n__lep += 1;
 			}
+
+			ot.event__id = it.EVENT_event;
+			ot.event__run = it.EVENT_run;
+			ot.event__lumi = it.EVENT_lumi;
 
 			ot.tree->Fill();
 
 		} // event loop
 
+		cout << "Output tree has " << ot.tree->GetEntries() << " entries";
 		currentFile->Close();
 
 	} // samples loop
-
-	outfile->Write();	
+	outfile->Write("", TObject::kOverwrite);	
 	return 0;
 
 }
