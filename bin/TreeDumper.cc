@@ -94,12 +94,12 @@ int main(int argc, const char* argv[])
 			for (int i=0; i < it.naJets; i++) {
 				#define ASSIGN(x, y) ot.jet__##x[ot.n__jet] = it.aJet_##y[i];
 
-				ASSIGN(pt, pt)
-				ASSIGN(eta, eta)
-				ASSIGN(phi, phi)
-				ASSIGN(energy, e)
-				ASSIGN(bd_csv, csv)
-				ASSIGN(id, flavour)
+				ASSIGN(pt, pt);
+				ASSIGN(eta, eta);
+				ASSIGN(phi, phi);
+				ASSIGN(energy, e);
+				ASSIGN(bd_csv, csv);
+				ASSIGN(id, flavour);
 				#undef ASSIGN
 
 				ot.n__jet += 1;
@@ -108,12 +108,12 @@ int main(int argc, const char* argv[])
 			for (int i=0; i < it.nhJets; i++) {
 				#define ASSIGN(x, y) ot.jet__##x[ot.n__jet] = it.hJet_##y[i];
 
-				ASSIGN(pt, pt)
-				ASSIGN(eta, eta)
-				ASSIGN(phi, phi)
-				ASSIGN(energy, e)
-				ASSIGN(bd_csv, csv)
-				ASSIGN(id, flavour)
+				ASSIGN(pt, pt);
+				ASSIGN(eta, eta);
+				ASSIGN(phi, phi);
+				ASSIGN(energy, e);
+				ASSIGN(bd_csv, csv);
+				ASSIGN(id, flavour);
 				#undef ASSIGN
 
 				ot.n__jet += 1;
@@ -124,19 +124,19 @@ int main(int argc, const char* argv[])
 				#define ASSIGN(x, y) ot.lep__##x[ot.n__lep] = it.vLepton_##y[i];
 				#define ASSIGN_GEN(x, y) ot.gen_lep__##x[ot.n__lep] = it.vLepton_##y[i]; \
 
-				ASSIGN(pt, pt)
-				ASSIGN(eta, eta)
-				ASSIGN(phi, phi)
-				ASSIGN(mass, mass)
+				ASSIGN(pt, pt);
+				ASSIGN(eta, eta);
+				ASSIGN(phi, phi);
+				ASSIGN(mass, mass);
 
-				ASSIGN_GEN(pt, genPt)
-				ASSIGN_GEN(eta, genEta)
-				ASSIGN_GEN(phi, genPhi)
+				ASSIGN_GEN(pt, genPt);
+				ASSIGN_GEN(eta, genEta);
+				ASSIGN_GEN(phi, genPhi);
 
-				ASSIGN(dxy, dxy)
-				ASSIGN(dz, dz)
-				ASSIGN(rel_iso, pfCombRelIso)
-				ASSIGN(id, type)
+				ASSIGN(dxy, dxy);
+				ASSIGN(dz, dz);
+				ASSIGN(rel_iso, pfCombRelIso);
+				ASSIGN(id, type);
 				#undef ASSIGN
 				#undef ASSIGN_GEN
 				ot.n__lep += 1;
@@ -146,19 +146,19 @@ int main(int argc, const char* argv[])
 				#define ASSIGN(x, y) ot.lep__##x[ot.n__lep] = it.aLepton_##y[i];
 				#define ASSIGN_GEN(x, y) ot.gen_lep__##x[ot.n__lep] = it.aLepton_##y[i]; \
 
-				ASSIGN(pt, pt)
-				ASSIGN(eta, eta)
-				ASSIGN(phi, phi)
-				ASSIGN(mass, mass)
+				ASSIGN(pt, pt);
+				ASSIGN(eta, eta);
+				ASSIGN(phi, phi);
+				ASSIGN(mass, mass);
 
-				ASSIGN_GEN(pt, genPt)
-				ASSIGN_GEN(eta, genEta)
-				ASSIGN_GEN(phi, genPhi)
+				ASSIGN_GEN(pt, genPt);
+				ASSIGN_GEN(eta, genEta);
+				ASSIGN_GEN(phi, genPhi);
 
-				ASSIGN(dxy, dxy)
-				ASSIGN(dz, dz)
-				ASSIGN(rel_iso, pfCombRelIso)
-				ASSIGN(id, type)
+				ASSIGN(dxy, dxy);
+				ASSIGN(dz, dz);
+				ASSIGN(rel_iso, pfCombRelIso);
+				ASSIGN(id, type);
 
 				#undef ASSIGN
 				#undef ASSIGN_GEN
@@ -166,6 +166,38 @@ int main(int argc, const char* argv[])
 				ot.n__lep += 1;
 			}
 
+			#define ASSIGN(x, y) ot.gen_##x = it.gen##y;
+			ASSIGN(b__pt,	B_pt);
+			ASSIGN(b__mass,	B_mass);
+			ASSIGN(b__eta,	B_eta);
+			ASSIGN(b__phi, 	B_phi);
+
+			ASSIGN(bbar__pt,	Bbar_pt);
+			ASSIGN(bbar__mass,	Bbar_mass);
+			ASSIGN(bbar__eta,	Bbar_eta);
+			ASSIGN(bbar__phi, 	Bbar_phi);
+			
+			ASSIGN(t__b__pt,	Top_bpt);
+			ASSIGN(t__b__eta,	Top_beta);
+			ASSIGN(t__b__phi,	Top_bphi);
+			ASSIGN(t__b__mass,	Top_bmass);
+
+			ASSIGN(tbar__b__pt,		Tbar_bpt);
+			ASSIGN(tbar__b__eta,	Tbar_beta);
+			ASSIGN(tbar__b__phi,	Tbar_bphi);
+			ASSIGN(tbar__b__mass,	Tbar_bmass);
+			#undef ASSIGN
+
+			for (int i=0; i < it.nSimBs; i++) {
+				#define ASSIGN(x, y) ot.sim_b__##x[i] = it.SimBs_##y[i];
+				ASSIGN(pt, pt);
+				ASSIGN(eta, eta);
+				ASSIGN(phi, phi);
+				ASSIGN(mass, mass);
+				#undef ASSIGN
+			}
+			ot.n__sim_b = it.nSimBs;
+			
 			ot.event__id = it.EVENT_event;
 			ot.event__run = it.EVENT_run;
 			ot.event__lumi = it.EVENT_lumi;

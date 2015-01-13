@@ -113,3 +113,34 @@ for t in [
             Dynamic1DArray(full_branch_name, "int", "n__jet" if "jet" in x
                 else "n__lep", "N_MAX")
         ]
+
+# True Top Branches
+for t in ["t", "tbar"]:
+    for v in [
+        ("eta"), ("mass"), ("phi"), ("pt"), ("status"),
+        ("b__eta"), ("b__mass"), ("b__phi"), ("b__pt"), ("b__status"),
+        ("w_d1__eta"), ("w_d1__mass"), ("w_d1__phi"), ("w_d1__pt"), ("w_d1__status"), ("w_d1__id"),
+        ("w_d2__eta"), ("w_d2__mass"), ("w_d2__phi"), ("w_d2__pt"), ("w_d2__status"), ("w_d2__id")
+    ]:
+        typ = "float"
+        if "status" in v or "id" in v:
+            typ = "int"
+        process += [Scalar("gen_%s__%s" % (t, v), typ)]
+
+for t in ["b", "bbar"]:
+    for v in ["eta", "mass", "phi", "pt", "status", "id"]:
+        typ = "float"
+        if "status" in v or "id" in v:
+            typ = "int"
+        process += [Scalar("gen_%s__%s" % (t, v), typ)]
+
+process += [Scalar("n__sim_b", "int")]
+
+for t in [
+    "pt", "eta", "phi", "mass",
+    ]:
+    full_branch_name = "sim_b__{0}".format(t)
+    process += [
+        Dynamic1DArray(full_branch_name, "float", "n__sim_b", "N_MAX")
+    ]
+
