@@ -21,6 +21,14 @@
 #define SET_ZERO(x,n,y) for(int i=0;i<n;i++) {x[i]=y;}
 #define SET_ZERO_2(x,n,m,y) for(int i=0;i<n;i++) { for(int j=0;j<m;j++) { x[i][j]=y; } }
 
+enum TTbarType {
+	TT_BB,
+	TT_BJ,
+	TT_CC,
+	TT_JJ,
+	TT_UNKNOWN
+};
+
 class SlimTree {
 public:
 	SlimTree(TTree* _tree) { tree = _tree; };
@@ -82,6 +90,9 @@ public:
 	float weight__trigger_up;
     
 	float weight__genmc;
+	int n__match_sim_b;
+	int n__match_sim_c;
+	int tt_type;
 	int n__tr;
 	int n__pvi;
 	int n__jet;
@@ -113,22 +124,16 @@ public:
 	float jet__bd_csv[N_MAX];
 	float jet__energy[N_MAX];
 	float jet__eta[N_MAX];
-	float jet__mass[N_MAX];
 	float jet__phi[N_MAX];
 	float jet__pt[N_MAX];
 	float jet__unc[N_MAX];
 	int jet__id[N_MAX];
-	float gen_jet__mass[N_MAX];
-	float gen_jet_parton__mass[N_MAX];
-	float gen_lep__mass[N_MAX];
+	int jet__match_id[N_MAX];
 	float gen_jet__phi[N_MAX];
-	float gen_jet_parton__phi[N_MAX];
 	float gen_lep__phi[N_MAX];
 	float gen_jet__pt[N_MAX];
-	float gen_jet_parton__pt[N_MAX];
 	float gen_lep__pt[N_MAX];
 	float gen_jet__eta[N_MAX];
-	float gen_jet_parton__eta[N_MAX];
 	float gen_lep__eta[N_MAX];
 	int trigger__bits[T_MAX];
 	float trigger__prescale[T_MAX];
@@ -243,6 +248,9 @@ public:
 		weight__trigger_up = DEF_VAL_FLOAT;
         
 		weight__genmc = DEF_VAL_FLOAT;
+		n__match_sim_b = DEF_VAL_INT;
+		n__match_sim_c = DEF_VAL_INT;
+		tt_type = DEF_VAL_INT;
 		n__tr = DEF_VAL_INT;
 		n__pvi = DEF_VAL_INT;
 		n__jet = DEF_VAL_INT;
@@ -274,22 +282,16 @@ public:
 		SET_ZERO(jet__bd_csv, N_MAX, DEF_VAL_FLOAT);
 		SET_ZERO(jet__energy, N_MAX, DEF_VAL_FLOAT);
 		SET_ZERO(jet__eta, N_MAX, DEF_VAL_FLOAT);
-		SET_ZERO(jet__mass, N_MAX, DEF_VAL_FLOAT);
 		SET_ZERO(jet__phi, N_MAX, DEF_VAL_FLOAT);
 		SET_ZERO(jet__pt, N_MAX, DEF_VAL_FLOAT);
 		SET_ZERO(jet__unc, N_MAX, DEF_VAL_FLOAT);
 		SET_ZERO(jet__id, N_MAX, DEF_VAL_INT);
-		SET_ZERO(gen_jet__mass, N_MAX, DEF_VAL_FLOAT);
-		SET_ZERO(gen_jet_parton__mass, N_MAX, DEF_VAL_FLOAT);
-		SET_ZERO(gen_lep__mass, N_MAX, DEF_VAL_FLOAT);
+		SET_ZERO(jet__match_id, N_MAX, DEF_VAL_INT);
 		SET_ZERO(gen_jet__phi, N_MAX, DEF_VAL_FLOAT);
-		SET_ZERO(gen_jet_parton__phi, N_MAX, DEF_VAL_FLOAT);
 		SET_ZERO(gen_lep__phi, N_MAX, DEF_VAL_FLOAT);
 		SET_ZERO(gen_jet__pt, N_MAX, DEF_VAL_FLOAT);
-		SET_ZERO(gen_jet_parton__pt, N_MAX, DEF_VAL_FLOAT);
 		SET_ZERO(gen_lep__pt, N_MAX, DEF_VAL_FLOAT);
 		SET_ZERO(gen_jet__eta, N_MAX, DEF_VAL_FLOAT);
-		SET_ZERO(gen_jet_parton__eta, N_MAX, DEF_VAL_FLOAT);
 		SET_ZERO(gen_lep__eta, N_MAX, DEF_VAL_FLOAT);
 		SET_ZERO(trigger__bits, T_MAX, DEF_VAL_INT);
 		SET_ZERO(trigger__prescale, T_MAX, DEF_VAL_FLOAT);
@@ -404,6 +406,9 @@ public:
 		tree->Branch("weight__trigger_up", &weight__trigger_up, "weight__trigger_up/F");
         
 		tree->Branch("weight__genmc", &weight__genmc, "weight__genmc/F");
+		tree->Branch("n__match_sim_b", &n__match_sim_b, "n__match_sim_b/I");
+		tree->Branch("n__match_sim_c", &n__match_sim_c, "n__match_sim_c/I");
+		tree->Branch("tt_type", &tt_type, "tt_type/I");
 		tree->Branch("n__tr", &n__tr, "n__tr/I");
 		tree->Branch("n__pvi", &n__pvi, "n__pvi/I");
 		tree->Branch("n__jet", &n__jet, "n__jet/I");
@@ -435,22 +440,16 @@ public:
 		tree->Branch("jet__bd_csv", jet__bd_csv, "jet__bd_csv[n__jet]/F");
 		tree->Branch("jet__energy", jet__energy, "jet__energy[n__jet]/F");
 		tree->Branch("jet__eta", jet__eta, "jet__eta[n__jet]/F");
-		tree->Branch("jet__mass", jet__mass, "jet__mass[n__jet]/F");
 		tree->Branch("jet__phi", jet__phi, "jet__phi[n__jet]/F");
 		tree->Branch("jet__pt", jet__pt, "jet__pt[n__jet]/F");
 		tree->Branch("jet__unc", jet__unc, "jet__unc[n__jet]/F");
 		tree->Branch("jet__id", jet__id, "jet__id[n__jet]/I");
-		tree->Branch("gen_jet__mass", gen_jet__mass, "gen_jet__mass[n__jet]/F");
-		tree->Branch("gen_jet_parton__mass", gen_jet_parton__mass, "gen_jet_parton__mass[n__jet]/F");
-		tree->Branch("gen_lep__mass", gen_lep__mass, "gen_lep__mass[n__lep]/F");
+		tree->Branch("jet__match_id", jet__match_id, "jet__match_id[n__jet]/I");
 		tree->Branch("gen_jet__phi", gen_jet__phi, "gen_jet__phi[n__jet]/F");
-		tree->Branch("gen_jet_parton__phi", gen_jet_parton__phi, "gen_jet_parton__phi[n__jet]/F");
 		tree->Branch("gen_lep__phi", gen_lep__phi, "gen_lep__phi[n__lep]/F");
 		tree->Branch("gen_jet__pt", gen_jet__pt, "gen_jet__pt[n__jet]/F");
-		tree->Branch("gen_jet_parton__pt", gen_jet_parton__pt, "gen_jet_parton__pt[n__jet]/F");
 		tree->Branch("gen_lep__pt", gen_lep__pt, "gen_lep__pt[n__lep]/F");
 		tree->Branch("gen_jet__eta", gen_jet__eta, "gen_jet__eta[n__jet]/F");
-		tree->Branch("gen_jet_parton__eta", gen_jet_parton__eta, "gen_jet_parton__eta[n__jet]/F");
 		tree->Branch("gen_lep__eta", gen_lep__eta, "gen_lep__eta[n__lep]/F");
 		tree->Branch("trigger__bits", trigger__bits, "trigger__bits[n__tr]/I");
 		tree->Branch("trigger__prescale", trigger__prescale, "trigger__prescale[n__tr]/F");
@@ -563,6 +562,9 @@ public:
 		tree->SetBranchAddress("weight__trigger_up", &weight__trigger_up);
         
 		tree->SetBranchAddress("weight__genmc", &weight__genmc);
+		tree->SetBranchAddress("n__match_sim_b", &n__match_sim_b);
+		tree->SetBranchAddress("n__match_sim_c", &n__match_sim_c);
+		tree->SetBranchAddress("tt_type", &tt_type);
 		tree->SetBranchAddress("n__tr", &n__tr);
 		tree->SetBranchAddress("n__pvi", &n__pvi);
 		tree->SetBranchAddress("n__jet", &n__jet);
@@ -594,22 +596,16 @@ public:
 		tree->SetBranchAddress("jet__bd_csv", jet__bd_csv);
 		tree->SetBranchAddress("jet__energy", jet__energy);
 		tree->SetBranchAddress("jet__eta", jet__eta);
-		tree->SetBranchAddress("jet__mass", jet__mass);
 		tree->SetBranchAddress("jet__phi", jet__phi);
 		tree->SetBranchAddress("jet__pt", jet__pt);
 		tree->SetBranchAddress("jet__unc", jet__unc);
 		tree->SetBranchAddress("jet__id", jet__id);
-		tree->SetBranchAddress("gen_jet__mass", gen_jet__mass);
-		tree->SetBranchAddress("gen_jet_parton__mass", gen_jet_parton__mass);
-		tree->SetBranchAddress("gen_lep__mass", gen_lep__mass);
+		tree->SetBranchAddress("jet__match_id", jet__match_id);
 		tree->SetBranchAddress("gen_jet__phi", gen_jet__phi);
-		tree->SetBranchAddress("gen_jet_parton__phi", gen_jet_parton__phi);
 		tree->SetBranchAddress("gen_lep__phi", gen_lep__phi);
 		tree->SetBranchAddress("gen_jet__pt", gen_jet__pt);
-		tree->SetBranchAddress("gen_jet_parton__pt", gen_jet_parton__pt);
 		tree->SetBranchAddress("gen_lep__pt", gen_lep__pt);
 		tree->SetBranchAddress("gen_jet__eta", gen_jet__eta);
-		tree->SetBranchAddress("gen_jet_parton__eta", gen_jet_parton__eta);
 		tree->SetBranchAddress("gen_lep__eta", gen_lep__eta);
 		tree->SetBranchAddress("trigger__bits", trigger__bits);
 		tree->SetBranchAddress("trigger__prescale", trigger__prescale);

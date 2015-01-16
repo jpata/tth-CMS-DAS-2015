@@ -3,6 +3,9 @@
 from TTH.TTHNtupleAnalyzer.headergen import *
 
 process += Scalar("weight__genmc", "float"),
+process += Scalar("n__match_sim_b", "int"),
+process += Scalar("n__match_sim_c", "int"),
+process += Scalar("tt_type", "int"),
 
 for t in ["n__tr", "n__pvi", "n__jet", "n__lep", "n__met_shift"]:
     process += [Scalar(t, "int")]
@@ -45,7 +48,7 @@ for t in [
 #    "el_e",
     "energy",
     "eta",
-    "mass",
+#    "mass",
 #    "mu_e",
 #    "ne_e",
 #    "nh_e",
@@ -67,6 +70,7 @@ for t in [
 
 for t in [
     "id",
+    "match_id"
 #    "jetId",
 #    "pass_pileupJetId",
 #    "type"
@@ -77,11 +81,15 @@ for t in [
     ]
 
 for t in [
-    "mass",
+#    "energy",
     "phi",
     "pt",
     "eta"]:
-    for x in ["gen_jet", "gen_jet_parton", "gen_lep"]:
+    for x in [
+        "gen_jet",
+    #    "gen_jet_parton",
+        "gen_lep"
+    ]:
         full_branch_name = "{0}__{1}".format(x, t)
         process += [
             Dynamic1DArray(full_branch_name, "float", "n__jet" if "jet" in x

@@ -80,6 +80,8 @@ int main(int argc, const char* argv[])
 
 		assert(currentTree != 0);
 
+		TH1F* counter = (TH1F*)(currentFile->Get("CountWithPU"));
+
 		Long64_t nentries = currentTree->GetEntries();
 		cout << "sample " << currentName << " total entries: " << nentries << endl;
 
@@ -93,6 +95,7 @@ int main(int argc, const char* argv[])
 			ot.n__jet = 0;
 			for (int i=0; i < it.naJets; i++) {
 				#define ASSIGN(x, y) ot.jet__##x[ot.n__jet] = it.aJet_##y[i];
+				#define ASSIGN_GEN(x, y) ot.gen_jet__##x[ot.n__jet] = it.aJet_##y[i];
 
 				ASSIGN(pt, pt);
 				ASSIGN(eta, eta);
@@ -100,13 +103,20 @@ int main(int argc, const char* argv[])
 				ASSIGN(energy, e);
 				ASSIGN(bd_csv, csv);
 				ASSIGN(id, flavour);
+
+				ASSIGN_GEN(pt, genPt);
+				ASSIGN_GEN(eta, genEta);
+				ASSIGN_GEN(phi, genPhi);
+
 				#undef ASSIGN
+				#undef ASSIGN_GEN
 
 				ot.n__jet += 1;
 			}
 
 			for (int i=0; i < it.nhJets; i++) {
 				#define ASSIGN(x, y) ot.jet__##x[ot.n__jet] = it.hJet_##y[i];
+				#define ASSIGN_GEN(x, y) ot.gen_jet__##x[ot.n__jet] = it.hJet_##y[i];
 
 				ASSIGN(pt, pt);
 				ASSIGN(eta, eta);
@@ -114,7 +124,13 @@ int main(int argc, const char* argv[])
 				ASSIGN(energy, e);
 				ASSIGN(bd_csv, csv);
 				ASSIGN(id, flavour);
+
+				ASSIGN_GEN(pt, genPt);
+				ASSIGN_GEN(eta, genEta);
+				ASSIGN_GEN(phi, genPhi);
+
 				#undef ASSIGN
+				#undef ASSIGN_GEN
 
 				ot.n__jet += 1;
 			}
@@ -122,7 +138,7 @@ int main(int argc, const char* argv[])
 			ot.n__lep = 0;
 			for (int i=0; i < it.nvlep; i++) {
 				#define ASSIGN(x, y) ot.lep__##x[ot.n__lep] = it.vLepton_##y[i];
-				#define ASSIGN_GEN(x, y) ot.gen_lep__##x[ot.n__lep] = it.vLepton_##y[i]; \
+				#define ASSIGN_GEN(x, y) ot.gen_lep__##x[ot.n__lep] = it.vLepton_##y[i];
 
 				ASSIGN(pt, pt);
 				ASSIGN(eta, eta);
@@ -144,7 +160,7 @@ int main(int argc, const char* argv[])
 
 			for (int i=0; i < it.nalep; i++) {
 				#define ASSIGN(x, y) ot.lep__##x[ot.n__lep] = it.aLepton_##y[i];
-				#define ASSIGN_GEN(x, y) ot.gen_lep__##x[ot.n__lep] = it.aLepton_##y[i]; \
+				#define ASSIGN_GEN(x, y) ot.gen_lep__##x[ot.n__lep] = it.aLepton_##y[i];
 
 				ASSIGN(pt, pt);
 				ASSIGN(eta, eta);
@@ -182,11 +198,110 @@ int main(int argc, const char* argv[])
 			ASSIGN(t__b__phi,	Top_bphi);
 			ASSIGN(t__b__mass,	Top_bmass);
 
+			ASSIGN(t__w_d1__pt,		Top_wdau1pt);
+			ASSIGN(t__w_d1__eta,	Top_wdau1eta);
+			ASSIGN(t__w_d1__phi,	Top_wdau1phi);
+			ASSIGN(t__w_d1__mass,	Top_wdau1mass);
+			ASSIGN(t__w_d1__id,		Top_wdau1id);
+
+			ASSIGN(t__w_d2__pt,		Top_wdau2pt);
+			ASSIGN(t__w_d2__eta,	Top_wdau2eta);
+			ASSIGN(t__w_d2__phi,	Top_wdau2phi);
+			ASSIGN(t__w_d2__mass,	Top_wdau2mass);
+			ASSIGN(t__w_d2__id,		Top_wdau2id);
+
 			ASSIGN(tbar__b__pt,		Tbar_bpt);
 			ASSIGN(tbar__b__eta,	Tbar_beta);
 			ASSIGN(tbar__b__phi,	Tbar_bphi);
 			ASSIGN(tbar__b__mass,	Tbar_bmass);
+
+			ASSIGN(tbar__w_d1__pt,		Top_wdau1pt);
+			ASSIGN(tbar__w_d1__eta,		Top_wdau1eta);
+			ASSIGN(tbar__w_d1__phi,		Top_wdau1phi);
+			ASSIGN(tbar__w_d1__mass,	Top_wdau1mass);
+			ASSIGN(tbar__w_d1__id,		Top_wdau1id);
+
+			ASSIGN(tbar__w_d2__pt,		Top_wdau2pt);
+			ASSIGN(tbar__w_d2__eta,		Top_wdau2eta);
+			ASSIGN(tbar__w_d2__phi,		Top_wdau2phi);
+			ASSIGN(tbar__w_d2__mass,	Top_wdau2mass);
+			ASSIGN(tbar__w_d2__id,		Top_wdau2id);
 			#undef ASSIGN
+
+			//p4 of the b(bbar) from the top(anti-top) decay
+			TLorentzVector topBLV(1, 0, 0, 1);
+			TLorentzVector atopBLV(1, 0, 0, 1);
+
+			//p4 of the c(cbar) from the top(anti-top)->W hadronic decay
+			TLorentzVector topCLV(1, 0, 0, 1);
+			TLorentzVector atopCLV(1, 0, 0, 1);
+
+
+			topBLV.SetPtEtaPhiM(ot.gen_t__b__pt, ot.gen_t__b__eta, ot.gen_t__b__phi, ot.gen_t__b__mass);
+			atopBLV.SetPtEtaPhiM(ot.gen_tbar__b__pt, ot.gen_tbar__b__eta, ot.gen_tbar__b__phi, ot.gen_tbar__b__mass);
+
+			if (std::abs(ot.gen_t__w_d1__id) == 4) {
+				topCLV.SetPtEtaPhiM(
+					ot.gen_t__w_d1__pt,
+					ot.gen_t__w_d1__eta,
+					ot.gen_t__w_d1__phi,
+					ot.gen_t__w_d1__mass
+				);
+			} else if (std::abs(ot.gen_t__w_d2__id) == 4) {
+				topCLV.SetPtEtaPhiM(
+					ot.gen_t__w_d2__pt,
+					ot.gen_t__w_d2__eta,
+					ot.gen_t__w_d2__phi,
+					ot.gen_t__w_d2__mass
+				);
+			}
+
+			if (std::abs(ot.gen_tbar__w_d1__id) == 4) {
+				atopCLV.SetPtEtaPhiM(
+					ot.gen_tbar__w_d1__pt,
+					ot.gen_tbar__w_d1__eta,
+					ot.gen_tbar__w_d1__phi,
+					ot.gen_tbar__w_d1__mass
+				);
+			} else if (std::abs(ot.gen_tbar__w_d2__id) == 4) {
+				atopCLV.SetPtEtaPhiM(
+					ot.gen_tbar__w_d2__pt,
+					ot.gen_tbar__w_d2__eta,
+					ot.gen_tbar__w_d2__phi,
+					ot.gen_tbar__w_d2__mass
+				);
+			}
+
+			ot.n__match_sim_b = 0;
+			ot.n__match_sim_c = 0;
+			 // now find out how many matched b's we have...
+			for(int hj = 0; hj < ot.n__jet; hj++){
+				TLorentzVector hJLV(1,0,0,1);
+
+				if(ot.gen_jet__pt[hj]>20) {
+					hJLV.SetPtEtaPhiM(
+						ot.gen_jet__pt[hj],
+						ot.gen_jet__eta[hj],
+						ot.gen_jet__phi[hj],
+						0.0
+					);
+				}
+				
+				// if jet is within acceptance...
+				if( hJLV.Pt() > 20 && TMath::Abs(hJLV.Eta()) < 5) {
+
+					if (std::abs(ot.jet__id[hj]) == 5) {
+						if(  topBLV.Pt() > 10 && topBLV.DeltaR(hJLV) < 0.5 ) continue;
+						if(atopBLV.Pt() > 10 && atopBLV.DeltaR(hJLV) < 0.5 ) continue;
+						ot.n__match_sim_b++;
+					}
+					else if (std::abs(ot.jet__id[hj]) == 4) {
+						if(  topCLV.Pt() > 10 && topCLV.DeltaR(hJLV) < 0.5 ) continue;
+						if(atopCLV.Pt() > 10 && atopCLV.DeltaR(hJLV) < 0.5 ) continue;
+						ot.n__match_sim_c++;
+					}
+				}
+			}
 
 			for (int i=0; i < it.nSimBs; i++) {
 				#define ASSIGN(x, y) ot.sim_b__##x[i] = it.SimBs_##y[i];
@@ -198,10 +313,25 @@ int main(int argc, const char* argv[])
 			}
 			ot.n__sim_b = it.nSimBs;
 			
+			if (ot.n__sim_b > 2 && ot.n__match_sim_b >= 2) {
+				ot.tt_type = TTbarType::TT_BB;
+			}
+			else if (ot.n__sim_b > 2 && ot.n__match_sim_b < 2) {
+				ot.tt_type = TTbarType::TT_BJ;
+			}
+			else if (ot.n__sim_b == 2 && ot.n__match_sim_c > 0) {
+				ot.tt_type = TTbarType::TT_CC;
+			}
+			else if (ot.n__sim_b == 2 && ot.n__match_sim_c == 0) {
+				ot.tt_type = TTbarType::TT_JJ;
+			} else {
+				ot.tt_type = TTbarType::TT_UNKNOWN;
+			}
 			ot.event__id = it.EVENT_event;
 			ot.event__run = it.EVENT_run;
 			ot.event__lumi = it.EVENT_lumi;
 
+			ot.weight__genmc = counter->GetBinContent(1);
 			ot.tree->Fill();
 
 		} // event loop
