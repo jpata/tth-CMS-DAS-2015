@@ -38,6 +38,51 @@ process.fwliteInput = cms.PSet(
             ntree    = cms.double(16755422.0),
             ngen    = cms.double(25370432.0),
         ),
+
+        cms.PSet(
+            skip     = cms.bool(False),
+            name     = cms.string("SingleMuRun2012BJul13"),
+            nickName = cms.string("SingleMuRun2012B"),
+            color    = cms.int32(0),
+            xSec     = cms.double(1.0),
+            ntree    = cms.double(1.0),
+            ngen    = cms.double(1.0),
+        ),
+        cms.PSet(
+            skip     = cms.bool(False),
+            name     = cms.string("SingleMuRun2012AJul13"),
+            nickName = cms.string("SingleMuRun2012A"),
+            color    = cms.int32(0),
+            xSec     = cms.double(1.0),
+            ntree    = cms.double(1.0),
+            ngen    = cms.double(1.0),
+        ),
+        cms.PSet(
+            skip     = cms.bool(False),
+            name     = cms.string("SingleMuRun2012CAug24Rereco"),
+            nickName = cms.string("SingleMuRun2012C"),
+            color    = cms.int32(0),
+            xSec     = cms.double(1.0),
+            ntree    = cms.double(1.0),
+            ngen    = cms.double(1.0),
+        ),
+        cms.PSet(
+            skip     = cms.bool(False),
+            name     = cms.string("SingleMuRun2012D-PromptReco-v1"),
+            nickName = cms.string("SingleMuRun2012D"),
+            color    = cms.int32(0),
+            xSec     = cms.double(1.0),
+            ntree    = cms.double(1.0),
+            ngen    = cms.double(1.0),
+        ),
         ]
     )
 )
+
+if __name__ == "__main__":
+    import ROOT
+    for s in process.fwliteInput.samples:
+        fn = process.fwliteInput.pathToFile.value() + process.fwliteInput.ordering.value() + s.name.value() + ".root"
+        tf = ROOT.TFile(fn)
+        tt = tf.Get("tree")
+        print s.nickName.value(), tt.GetEntries()
