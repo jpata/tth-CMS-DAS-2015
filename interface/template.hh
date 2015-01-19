@@ -1,4 +1,4 @@
-//python $CMSSW_BASE/src/TTH/TTHNtupleAnalyzer/python/headergen.py $CMSSW_BASE/src/TTH/das/interface/template.hh $CMSSW_BASE/src/TTH/das/interface/slim_tree.hh $CMSSW_BASE/src/TTH/das/python/branches.py
+//python $CMSSW_BASE/src/TTH/TTHNtupleAnalyzer/python/headergen.py $CMSSW_BASE/src/CMSDAS/TTH/interface/template.hh $CMSSW_BASE/src/CMSDAS/TTH/interface/slim_tree.hh $CMSSW_BASE/src/CMSDAS/TTH/python/branches.py
 #ifndef SLIM_TREE
 #define SLIM_TREE
 
