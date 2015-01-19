@@ -1,4 +1,4 @@
-//python $CMSSW_BASE/src/TTH/TTHNtupleAnalyzer/python/headergen.py $CMSSW_BASE/src/TTH/das/interface/template.hh $CMSSW_BASE/src/TTH/das/python/branches.py 
+//python $CMSSW_BASE/src/TTH/TTHNtupleAnalyzer/python/headergen.py $CMSSW_BASE/src/CMSDAS/TTH/interface/template.hh $CMSSW_BASE/src/CMSDAS/TTH/interface/slim_tree.hh $CMSSW_BASE/src/CMSDAS/TTH/python/branches.py
 #ifndef SLIM_TREE
 #define SLIM_TREE
 
@@ -111,8 +111,10 @@ public:
 	int trig_lep__pass[N_MAX];
 	int trig_jet__pass[N_MAX];
 	float jet__bd_csv[N_MAX];
-	float jet__bd_csv__up[N_MAX];
-	float jet__bd_csv__down[N_MAX];
+	float jet__bd_csv__bc_up[N_MAX];
+	float jet__bd_csv__bc_down[N_MAX];
+	float jet__bd_csv__l_up[N_MAX];
+	float jet__bd_csv__l_down[N_MAX];
 	float jet__energy[N_MAX];
 	float jet__eta[N_MAX];
 	float jet__phi[N_MAX];
@@ -268,8 +270,10 @@ public:
 		SET_ZERO(trig_lep__pass, N_MAX, DEF_VAL_INT);
 		SET_ZERO(trig_jet__pass, N_MAX, DEF_VAL_INT);
 		SET_ZERO(jet__bd_csv, N_MAX, DEF_VAL_FLOAT);
-		SET_ZERO(jet__bd_csv__up, N_MAX, DEF_VAL_FLOAT);
-		SET_ZERO(jet__bd_csv__down, N_MAX, DEF_VAL_FLOAT);
+		SET_ZERO(jet__bd_csv__bc_up, N_MAX, DEF_VAL_FLOAT);
+		SET_ZERO(jet__bd_csv__bc_down, N_MAX, DEF_VAL_FLOAT);
+		SET_ZERO(jet__bd_csv__l_up, N_MAX, DEF_VAL_FLOAT);
+		SET_ZERO(jet__bd_csv__l_down, N_MAX, DEF_VAL_FLOAT);
 		SET_ZERO(jet__energy, N_MAX, DEF_VAL_FLOAT);
 		SET_ZERO(jet__eta, N_MAX, DEF_VAL_FLOAT);
 		SET_ZERO(jet__phi, N_MAX, DEF_VAL_FLOAT);
@@ -425,8 +429,10 @@ public:
 		tree->Branch("trig_lep__pass", trig_lep__pass, "trig_lep__pass[n__lep]/I");
 		tree->Branch("trig_jet__pass", trig_jet__pass, "trig_jet__pass[n__jet]/I");
 		tree->Branch("jet__bd_csv", jet__bd_csv, "jet__bd_csv[n__jet]/F");
-		tree->Branch("jet__bd_csv__up", jet__bd_csv__up, "jet__bd_csv__up[n__jet]/F");
-		tree->Branch("jet__bd_csv__down", jet__bd_csv__down, "jet__bd_csv__down[n__jet]/F");
+		tree->Branch("jet__bd_csv__bc_up", jet__bd_csv__bc_up, "jet__bd_csv__bc_up[n__jet]/F");
+		tree->Branch("jet__bd_csv__bc_down", jet__bd_csv__bc_down, "jet__bd_csv__bc_down[n__jet]/F");
+		tree->Branch("jet__bd_csv__l_up", jet__bd_csv__l_up, "jet__bd_csv__l_up[n__jet]/F");
+		tree->Branch("jet__bd_csv__l_down", jet__bd_csv__l_down, "jet__bd_csv__l_down[n__jet]/F");
 		tree->Branch("jet__energy", jet__energy, "jet__energy[n__jet]/F");
 		tree->Branch("jet__eta", jet__eta, "jet__eta[n__jet]/F");
 		tree->Branch("jet__phi", jet__phi, "jet__phi[n__jet]/F");
@@ -580,8 +586,10 @@ public:
 		tree->SetBranchAddress("trig_lep__pass", trig_lep__pass);
 		tree->SetBranchAddress("trig_jet__pass", trig_jet__pass);
 		tree->SetBranchAddress("jet__bd_csv", jet__bd_csv);
-		tree->SetBranchAddress("jet__bd_csv__up", jet__bd_csv__up);
-		tree->SetBranchAddress("jet__bd_csv__down", jet__bd_csv__down);
+		tree->SetBranchAddress("jet__bd_csv__bc_up", jet__bd_csv__bc_up);
+		tree->SetBranchAddress("jet__bd_csv__bc_down", jet__bd_csv__bc_down);
+		tree->SetBranchAddress("jet__bd_csv__l_up", jet__bd_csv__l_up);
+		tree->SetBranchAddress("jet__bd_csv__l_down", jet__bd_csv__l_down);
 		tree->SetBranchAddress("jet__energy", jet__energy);
 		tree->SetBranchAddress("jet__eta", jet__eta);
 		tree->SetBranchAddress("jet__phi", jet__phi);

@@ -33,11 +33,14 @@
 #include "CMSDAS/TTH/interface/TTHTree.h"
 #include "CMSDAS/TTH/interface/slim_tree.hh"
 
+#include "CMSDAS/TTH/interface/helpers.hh"
+
 #define GENJETDR 0.3
 #define VERBOSE false
 
 #define assign(va, vb, la, lb) ot.va
 using namespace std;
+
 
 int main(int argc, const char* argv[])
 {
@@ -101,7 +104,11 @@ int main(int argc, const char* argv[])
 				ASSIGN(eta, eta);
 				ASSIGN(phi, phi);
 				ASSIGN(energy, e);
-				ASSIGN(bd_csv, csv);
+				ASSIGN(bd_csv, csv_nominal);
+				ASSIGN(bd_csv__bc_up, csv_upBC);
+				ASSIGN(bd_csv__l_up, csv_upL);
+				ASSIGN(bd_csv__bc_down, csv_downBC);
+				ASSIGN(bd_csv__l_down, csv_downL);
 				ASSIGN(id, flavour);
 				ASSIGN(jec_unc, JECUnc);
 
@@ -123,7 +130,11 @@ int main(int argc, const char* argv[])
 				ASSIGN(eta, eta);
 				ASSIGN(phi, phi);
 				ASSIGN(energy, e);
-				ASSIGN(bd_csv, csv);
+				ASSIGN(bd_csv, csv_nominal);
+				ASSIGN(bd_csv__bc_up, csv_upBC);
+				ASSIGN(bd_csv__l_up, csv_upL);
+				ASSIGN(bd_csv__bc_down, csv_downBC);
+				ASSIGN(bd_csv__l_down, csv_downL);
 				ASSIGN(id, flavour);
 				ASSIGN(jec_unc, JECUnc);
 

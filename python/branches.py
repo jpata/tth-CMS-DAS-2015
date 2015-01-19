@@ -43,8 +43,10 @@ for t in ["pt", "eta", "phi", "pass"]:
 
 for t in [
     "bd_csv",
-    "bd_csv__up",
-    "bd_csv__down",
+    "bd_csv__bc_up",
+    "bd_csv__bc_down",
+    "bd_csv__l_up",
+    "bd_csv__l_down",
 #    "ce_e",
 #    "ch_e",
 #    "el_e",
@@ -154,3 +156,6 @@ for t in [
         Dynamic1DArray(full_branch_name, "float", "n__sim_b", "N_MAX")
     ]
 
+if __name__ == "__main__":
+	import os
+	os.system("python $CMSSW_BASE/src/TTH/TTHNtupleAnalyzer/python/headergen.py $CMSSW_BASE/src/CMSDAS/TTH/interface/template.hh $CMSSW_BASE/src/CMSDAS/TTH/interface/slim_tree.hh $CMSSW_BASE/src/CMSDAS/TTH/python/branches.py")
