@@ -103,6 +103,7 @@ int main(int argc, const char* argv[])
 				ASSIGN(energy, e);
 				ASSIGN(bd_csv, csv);
 				ASSIGN(id, flavour);
+				ASSIGN(jec_unc, JECUnc);
 
 				ASSIGN_GEN(pt, genPt);
 				ASSIGN_GEN(eta, genEta);
@@ -124,6 +125,7 @@ int main(int argc, const char* argv[])
 				ASSIGN(energy, e);
 				ASSIGN(bd_csv, csv);
 				ASSIGN(id, flavour);
+				ASSIGN(jec_unc, JECUnc);
 
 				ASSIGN_GEN(pt, genPt);
 				ASSIGN_GEN(eta, genEta);
