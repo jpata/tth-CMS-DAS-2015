@@ -30,8 +30,8 @@
 #include "DataFormats/FWLite/interface/Run.h"
 #include "DataFormats/Luminosity/interface/LumiSummary.h"
 
-#include "TTH/das/interface/TTHTree.h"
-#include "TTH/das/interface/slim_tree.hh"
+#include "CMSDAS/TTH/interface/TTHTree.h"
+#include "CMSDAS/TTH/interface/slim_tree.hh"
 
 #define GENJETDR 0.3
 #define VERBOSE false

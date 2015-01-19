@@ -26,7 +26,7 @@
 #include "FWCore/PythonParameterSet/interface/PythonProcessDesc.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
-#include "TTH/das/interface/slim_tree.hh"
+#include "CMSDAS/TTH/interface/slim_tree.hh"
 
 
 
