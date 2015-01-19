@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Types as CfgTypes
 import FWCore.ParameterSet.Config as cms
-process = cms.Process("TreeProducer")
+process = cms.Process("TTHAnalyzer")
 
 xsecTT_SL = 107.66
 xsecTT_FL = 25.81
@@ -8,7 +8,7 @@ xsecTT_FH = 112.33
 
 process.fwliteInput = cms.PSet(
     outFileName   = cms.string("output.root"),
-    pathToFile    = cms.string(""),
+    pathToFile    = cms.string("/data/shared/Long_Exercise_tth/"),
     ordering      = cms.string(""),
     samples = cms.VPSet([
         cms.PSet(
@@ -22,7 +22,7 @@ process.fwliteInput = cms.PSet(
         ),
         cms.PSet(
             skip     = cms.bool(False),
-            name     = cms.string("TTJetsFullLept_small"),
+            name     = cms.string("TTJetsFullLept"),
             nickName = cms.string("TTJetsFullLept"),
             color    = cms.int32(2),
             xSec     = cms.double(xsecTT_FL),
@@ -31,7 +31,7 @@ process.fwliteInput = cms.PSet(
         ),
         cms.PSet(
             skip     = cms.bool(False),
-            name     = cms.string("TTJetsSemiLept_small"),
+            name     = cms.string("TTJetsSemiLept"),
             nickName = cms.string("TTJetsSemiLept"),
             color    = cms.int32(3),
             xSec     = cms.double(xsecTT_SL),
