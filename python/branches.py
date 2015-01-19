@@ -43,6 +43,8 @@ for t in ["pt", "eta", "phi", "pass"]:
 
 for t in [
     "bd_csv",
+    "bd_csv__up",
+    "bd_csv__down",
 #    "ce_e",
 #    "ch_e",
 #    "el_e",
@@ -57,7 +59,7 @@ for t in [
 #    "pileupJetId",
     "pt",
 #    "pt_alt",
-    "unc",
+    "jec_unc",
 #    "vtx3DSig",
 #    "vtx3DVal",
 #    "vtxMass",
