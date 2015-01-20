@@ -106,7 +106,23 @@ int main(int argc, const char* argv[])
             processed_entries += 1;
             if(total_entries%50000==0) cout << "Processed " << total_entries << endl;
 
+            //Load one event to memory
             currentTree->GetEntry(entry);
+
+            //Access the event data
+            
+            //Number of jets in event
+            int njets = it.n__jet;
+
+            //A C array containing [0...njets-1] jet transverse momenta
+            float* jet_pt = it.jet__pt;
+           
+            //The PDG-id of the parton matched to the jet
+            int* jet_id = it.jet__id;
+
+            for (int nj=0; nj < njets; nj++) {
+                cout << "jet " << nj << " pt=" << jet_pt[nj] << " id=" << jet_id[nj] << endl;
+            }
 
         } // event loop
 
