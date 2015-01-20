@@ -78,7 +78,7 @@ if __name__ == "__main__" and hasattr(sys, "argv") and  "--create" in sys.argv:
         ofi.write("#!/bin/bash\n")
         ofi.write('set -e\n')
         ofi.write('echo "Processing %d to %d"\n' % (first_event, last_event))
-        ofi.write('TTH_JOBINDEX=%d AnalyzerCSV python/Analyzer_par_cfg.py\n' % nj)
+        ofi.write('TTH_JOBINDEX=%d Analyzer python/Analyzer_par_cfg.py\n' % nj)
         ofi.write('echo "Job done with exit code $?"\n')
         ofi.close()
         os.system("chmod +x %s" % ofname)

@@ -1,21 +1,3 @@
-<bin   file="TreeDumper.cc" name="TreeDumper">
-  <use   name="DataFormats/FWLite"/>
-  <use   name="FWCore/FWLite"/>
-  <use   name="FWCore/PythonParameterSet"/>
-  <use   name="FWCore/Framework"/> 
-  <use   name="FWCore/MessageLogger"/>
-  <use   name="FWCore/Utilities"/>
-  <use   name="FWCore/ParameterSet"/>
-  <use   name="PhysicsTools/FWLite"/>
-  <use   name="PhysicsTools/Utilities"/>
-  <use   name="PhysicsTools/CandUtils"/>
-  <use   name="PhysicsTools/SelectorUtils"/>
-  <use   name="CommonTools/Utils"/>
-  <use   name="root"/>
-  <use   name="classlib"/>
-  <use   name="boost"/>
-</bin>
-
 <bin   file="Analyzer.cc" name="Analyzer">
   <use   name="DataFormats/FWLite"/>
   <use   name="FWCore/FWLite"/>
