@@ -59,7 +59,7 @@ process.fwliteInput = cms.PSet(
         ),
         cms.PSet(
             name     = cms.string("SingleMuRun2012CAug24Rereco"),
-            nickName = cms.string("SingleMuRun2012C"),
+            nickName = cms.string("SingleMuRun2012C1"),
             color    = cms.int32(0),
             xSec     = cms.double(1.0),
             ngen    = cms.double(1.0),

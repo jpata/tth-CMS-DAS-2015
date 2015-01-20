@@ -75,6 +75,7 @@ public:
 	//maps jet pdg-id to a TH1D containing the CSV distributions
 	std::unordered_map<int, TH1D*> csvs;
 
+	TH1D* failreasons;
 	TH1D* njets;
 
 	TH1D* ntags_5j;
@@ -110,6 +111,9 @@ public:
 	}
 
 	Histograms(const std::string sample) {
+        //Enable automatic Sumw2 saving 
+        TH1::SetDefaultSumw2(true);
+		failreasons = new TH1D((sample + "_failreasons").c_str(), "Event cut reasons", 10, 0, 10);
 		jet_pt = new TH1D((sample + "_jet_pt").c_str(), "p_t of all jets", 80, 30, 600);
 		for (int _csv : csv_ids) {
 			csvs[_csv] = new TH1D((sample + "_csv_" + std::to_string(_csv)).c_str(), "CSV", 20, 0, 1);
@@ -323,16 +327,22 @@ int main(int argc, const char* argv[])
 
 	const std::string pathToFile(in.getParameter<std::string>("pathToFile"));
 	const std::string ordering(in.getParameter<std::string>("ordering"));
-
+    
+	const unsigned long long firstEvent(in.getParameter<unsigned long long>("firstEvent"));
+	const unsigned long long lastEvent(in.getParameter<unsigned long long>("lastEvent"));
+    if (firstEvent!=lastEvent) { 
+        cout << "processing events " << firstEvent << ":" << lastEvent << endl;
+    }
 	TFile* outfile = new TFile(out_fn.c_str(), "RECREATE");
 
+	unsigned long long total_entries = 0;
+	unsigned long long processed_entries = 0;
 	for(unsigned int sample = 0 ; sample < samples.size(); sample++) {
 
 		const string currentName = samples[sample].getParameter<std::string>("name");
 		const string nickName = samples[sample].getParameter<std::string>("nickName");
 		const string fn(pathToFile + ordering + currentName + ".root");
 		const double ngen = samples[sample].getParameter<double>("ngen");
-		const double ntree = samples[sample].getParameter<double>("ntree");
 		const double xs = samples[sample].getParameter<double>("xSec");
 		
 		TFile* currentFile = new TFile(fn.c_str());
@@ -342,29 +352,50 @@ int main(int argc, const char* argv[])
 		TTree* currentTree = (TTree*)(currentFile->Get("tree"));
 		SlimTree it(currentTree);
 
-		Long64_t nentries = currentTree->GetEntries();
+		const unsigned long long nentries = currentTree->GetEntries();
 
 		//Calculate the effective number of generated events.
-		const double ngen_effective = ngen * ((double)nentries/ntree);
-		const double xsweight = xs / ngen_effective;
+		const double xsweight = xs / ngen;
 
-		cout << "sample " << currentName << " total entries: " << nentries << endl;
+		cout << "sample " << currentName << " total entries: " << nentries << " xsw " << xsweight << endl;
 
 		it.set_branch_addresses();
 
 		Histograms hs(make_hists(outfile, nickName));
 
-		for (Long64_t entry = 0; entry < nentries ; entry++) {
+		for (unsigned long long entry = 0; entry < nentries ; entry++) {
+			if (firstEvent <= lastEvent && lastEvent > 0 && (total_entries < firstEvent || total_entries > lastEvent)) {
+			    total_entries += 1;
+				continue;
+			}
+			total_entries += 1;
 
 			it.loop_initialize();
 			hs.loop_initialize();
-//			std::cout << "EV " << entry << std::endl;
 
-			if(entry%20000==0) cout << entry << "  (" <<
-				float(entry)/float(nentries)*100. << " % completed)" << endl;
+			if(total_entries%50000==0) cout << "Processed " << total_entries << endl;
 
 			currentTree->GetEntry(entry);
-
+            processed_entries += 1;
+			
+            int nl = it.n__lep;
+            int n_good_mu = 0;
+            //int good_muon_index = -1;
+            for (int _nl=0; _nl < nl; _nl++) {
+                double pt = it.lep__pt[_nl];
+                double eta = it.lep__eta[_nl];
+                double iso = it.lep__rel_iso[_nl];
+                int id = it.lep__id[_nl];
+                //std::cout << "_nl " << _nl << pt << " " << eta << " " << iso << " " << id << std::endl;
+                if (std::abs(id) == 13 && pt > 26 && std::abs(eta) < 2.4 && iso < 0.12) {
+                    n_good_mu += 1;
+                    //good_muon_index = nl;
+                }
+            }
+            if (n_good_mu != 1) {
+                hs.failreasons->Fill(1); 
+                continue;
+            }
 
 			//Get the jets from the event
 			int nj = it.n__jet;
@@ -376,6 +407,10 @@ int main(int argc, const char* argv[])
 					jets.push_back(jet);
 				}
 			}
+            if (jets.size() < 4) {
+                hs.failreasons->Fill(2); 
+                continue;
+            }
 
 
 			//Fill N_jets
