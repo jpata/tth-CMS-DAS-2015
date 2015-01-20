@@ -1,11 +1,12 @@
-#include "FWCore/FWLite/interface/AutoLibraryLoader.h"
 
+//C++ imports
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <map>
 #include <string>
 
+//ROOT imports
 #include "TSystem.h"
 #include "TROOT.h"
 #include "TFile.h"
@@ -18,61 +19,102 @@
 #include "TLorentzVector.h"
 #include "TVectorD.h"
 
-#include "PhysicsTools/FWLite/interface/TFileService.h"
+//FWLite imports
+#include "FWCore/FWLite/interface/AutoLibraryLoader.h"
 
+//import the headers to configure via python
 #include "FWCore/ParameterSet/interface/ProcessDesc.h"
 #include "FWCore/PythonParameterSet/interface/PythonProcessDesc.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
+//This header file contains the input TTree structure
 #include "CMSDAS/TTH/interface/slim_tree.hh"
 
 int main(int argc, const char* argv[])
 {
 
-	using namespace std;
+    using namespace std;
 
-	gROOT->SetBatch(true);
-	gSystem->Load("libFWCoreFWLite");
-	gSystem->Load("libDataFormatsFWLite");
-	AutoLibraryLoader::enable();
+    //Disable pop-up plots
+    gROOT->SetBatch(true);
 
-	PythonProcessDesc builder(argv[1]);
-	const edm::ParameterSet& in = builder.processDesc()->getProcessPSet()->getParameter<edm::ParameterSet>("fwliteInput");
-	const edm::VParameterSet& samples = in.getParameter<edm::VParameterSet>("samples") ;
-	const std::string out_fn = in.getParameter<std::string>("outFileName") ;
+    //Automatically load necessary precompiled libraries via ROOT
+    gSystem->Load("libFWCoreFWLite");
+    gSystem->Load("libDataFormatsFWLite");
+    AutoLibraryLoader::enable();
 
-	const std::string pathToFile(in.getParameter<std::string>("pathToFile"));
-	const std::string ordering(in.getParameter<std::string>("ordering"));
+    //Load the python configuration from the first command line argument
+    PythonProcessDesc builder(argv[1]);
 
-	TFile* outfile = new TFile(out_fn.c_str(), "RECREATE");
+    //This is the full configuration
+    const edm::ParameterSet& in = builder.processDesc()->getProcessPSet()->getParameter<edm::ParameterSet>("fwliteInput");
+    
+    //A vector of input samples
+    const edm::VParameterSet& samples = in.getParameter<edm::VParameterSet>("samples");
 
-	for(unsigned int sample = 0 ; sample < samples.size(); sample++) {
+    //The output file name
+    const std::string out_fn = in.getParameter<std::string>("outFileName") ;
 
-		const string currentName = samples[sample].getParameter<std::string>("name");
-		const string fn(pathToFile + ordering + currentName + ".root");
-		
-		TFile* currentFile = new TFile(fn.c_str());
+    //These two will be prepended to the input file name (pathToFile + ordering + sample)
+    const std::string pathToFile(in.getParameter<std::string>("pathToFile")); //must be / terminated
+    const std::string ordering(in.getParameter<std::string>("ordering")); //can be empty
+    
+    const unsigned long long firstEvent(in.getParameter<unsigned long long>("firstEvent"));
+    const unsigned long long lastEvent(in.getParameter<unsigned long long>("lastEvent"));
+    
+    unsigned long long total_entries = 0;
+    unsigned long long processed_entries = 0;
 
-		assert(currentFile != 0);
+    //Create the output file. Old output will be deleted if it exists
+    TFile* outfile = new TFile(out_fn.c_str(), "RECREATE");
 
-		TTree* currentTree = (TTree*)(currentFile->Get("tree"));
+    //Process each sample
+    for(unsigned int sample = 0 ; sample < samples.size(); sample++) {
 
-		Long64_t nentries = currentTree->GetEntries();
-		cout << "sample " << currentName << " total entries: " << nentries << endl;
+        //Create the sample file name
+        const string currentName = samples[sample].getParameter<std::string>("name");
+        const string fn(pathToFile + ordering + currentName + ".root");
+        
+        const double ngen = samples[sample].getParameter<double>("ngen");
+        const double xs = samples[sample].getParameter<double>("xSec");
+        const double xsweight = xs / ngen;
+        
+        TFile* currentFile = new TFile(fn.c_str());
 
-		for (Long64_t entry = 0; entry < nentries ; entry++) {
+        //Asserts are useful to avoid segfaults in case of error
+        assert(currentFile != 0);
 
-			if(entry%5000==0) cout << entry << "  (" << float(entry)/float(nentries)*100. << " % completed)" << endl;
+        TTree* currentTree = (TTree*)(currentFile->Get("tree"));
+        assert(currentTree != 0);
+       
+        //Create the input TTree wrapper
+        SlimTree it(currentTree);
 
-			currentTree->GetEntry(entry);
+        Long64_t nentries = currentTree->GetEntries();
+        cout << "sample " << currentName << " total entries: " << nentries << " xsw " << xsweight << endl;
+    
+        //Attach the input TTree branches 
+        it.set_branch_addresses();
 
-		} // event loop
+        for (Long64_t entry = 0; entry < nentries ; entry++) {
+            
+            if (firstEvent <= lastEvent && lastEvent > 0 && (total_entries < firstEvent || total_entries > lastEvent)) {
+                total_entries += 1;
+                continue;
+            }
+            total_entries += 1;
+            processed_entries += 1;
+            if(total_entries%50000==0) cout << "Processed " << total_entries << endl;
 
-		currentFile->Close();
+            currentTree->GetEntry(entry);
 
-	} // samples loop
+        } // event loop
 
-	outfile->Write("", TObject::kOverwrite);	
-	return 0;
+        currentFile->Close();
+
+    } // samples loop
+
+    outfile->Write("", TObject::kOverwrite);    
+    return 0;
 
 }
