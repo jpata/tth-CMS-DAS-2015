@@ -4,7 +4,7 @@ process = cms.Process("TreeProducer")
 
 process.fwliteInput = cms.PSet(
     outFileName   = cms.string("output.root"),
-    pathToFile    = cms.string("data/"),
+    pathToFile    = cms.string("/hdfs/cms/store/user/liis/TTH_Ntuples_jsonUpdate/"),
     ordering      = cms.string("DiJetPt_"),
     samples = cms.VPSet(
         cms.PSet(

@@ -55,15 +55,24 @@ ps = cms.VPSet([
 		color	= cms.int32(41),
 		xSec	 = cms.double(xsecTT_FL),
 	),
-		cms.PSet(
-		skip	 = cms.bool(True),  # 148139
-		name	 = cms.string('SingleMuRun2012AJul13'),
-		nickName = cms.string('SingleMuRun2012AJul13'),
-		color	= cms.int32(1),
-		xSec	 = cms.double(-1),
-	),
 ])
 
+for s in [
+	"SingleMuRun2012AAug06",
+	"SingleMuRun2012AJul13",
+	"SingleMuRun2012BJul13",
+	"SingleMuRun2012CAug24Rereco",
+	"SingleMuRun2012C-EcalRecover_11Dec2012-v1_v2",
+	"SingleMuRun2012CPromptv2",
+	"SingleMuRun2012CPromptV2TopUp",
+	"SingleMuRun2012D-PromptReco-v1"]:
+	ps += [cms.PSet(
+		skip	 = cms.bool(True),
+		name	 = cms.string(s),
+		nickName = cms.string(s),
+		color	= cms.int32(1),
+		xSec	 = cms.double(-1),
+	)]
 process = cms.Process("TreeProducer")
 
 process.fwliteInput = cms.PSet(
