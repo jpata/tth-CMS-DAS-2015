@@ -79,12 +79,6 @@ int main(int argc, const char* argv[])
         const double xs = samples[sample].getParameter<double>("xSec");
         const double xsweight = xs / ngen;
         
-        outfile->cd();
-        TH1D* h_csv = new TH1D((currentName + "_csv").c_str(), "CSV distribution (jet p_t > 30 GeV)",
-            30, //number of bins
-            0, //low
-            1 //high
-        );
         TFile* currentFile = new TFile(fn.c_str());
 
         //Asserts are useful to avoid segfaults in case of error
