@@ -21,15 +21,19 @@ per_job = 1000000
 
 #loop over pre-configured input samples
 for s in process.fwliteInput.samples:
-
+    print "Getting number of events from ", s
     #get the input filename
     fn = process.fwliteInput.pathToFile.value() + process.fwliteInput.ordering.value() + s.name.value() + ".root"
     #get the TTree with events
-    tf = ROOT.TFile(fn)
+    print "Opening", fn
+    tf = ROOT.TFile(fn, "READ")
+    print "TFile opened", tf
     tt = tf.Get("tree")
+    print "TFile acquired", tt
 
     #get the number of events in the TTree
     N = tt.GetEntries()
+    print "Entries received", N
     Ntot += N
 
 #calculate the total number of jobs to run
